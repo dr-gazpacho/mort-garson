@@ -4,8 +4,14 @@ import time
 client = udp_client.SimpleUDPClient("127.0.0.1", 57120)
 
 
-def freq(freq):
-    client.send_message('/synth/params', [freq])
+def create(name, freq):
+    client.send_message('/synth/create', [name, freq])
 
-def free():
-    client.send_message('/synth/free', [])
+def freq(name, freq):
+    client.send_message('/synth/params', [name, freq])
+
+def free(name = False):
+    if name:
+        client.send_message('/synth/free', [name])
+    else:
+        client.send_message('/synth/freeAll', [])
