@@ -17,8 +17,13 @@ OSCFunc({
         (name).asSymbol,
         Synth(\basicSine, [\freq, freq])
     );
-
 }, '/synth/create');
+
+// Simple test OSC handler that just prints
+OSCFunc({ |msg, time, addr, recvPort|
+    "Got test message!".postln;
+    msg.postln;
+}, '/test/simple');
 
 //update frequency of synth with given name
 OSCFunc({
@@ -38,7 +43,8 @@ OSCFunc({
 //kill all processes
 OSCFunc({
 	|msg|
-	Server.killAll;
-}, '/synth/freeAll')
+	CmdPeriod.run;
+}, '/synth/freeAll');
+
 
 
