@@ -3,6 +3,7 @@
 
 # just dont
 .DS_Store
+**/.DS_Store
 
 # Object files
 *.o
