@@ -7,8 +7,6 @@ SynthDef.new(\basicSine, {
 
 s.plotTree;
 
-/*~rest.set(\freq, 220);*/
-
 //create synth with given name
 OSCFunc({
 	|msg, time, addr, recvPort|
@@ -44,4 +42,3 @@ OSCFunc({
 }, '/synth/freeAll')
 
 
-/*~rest.free;*/
