@@ -12,6 +12,11 @@ Lectures: https://www.youtube.com/@elifieldsteel
 
 Flex Sensor Data sheet: https://cdn-shop.adafruit.com/datasheets/SpectraFlex2inch.pdf
 
+OSC Client in C: https://github.com/mhroth/tinyosc
+ - This could be relevant/have done some of the hard work for us
+
+Unrelated project that uses networks to stream SC output over the World Wide Web: https://github.com/khilnani/supercollider.web/tree/master
+
 
 Hardware - 
  - Raspberry pi 4 8gb (TODO: in this section, we need more granular and specific specs to replicate this if we make more than one)
