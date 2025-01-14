@@ -15,7 +15,7 @@ Flex Sensor Data sheet: https://cdn-shop.adafruit.com/datasheets/SpectraFlex2inc
 OSC Client in C: https://github.com/mhroth/tinyosc
  - This could be relevant/have done some of the hard work for us
 
-Unrelated project that uses networks to stream SC output over the World Wide Web: https://github.com/khilnani/supercollider.web/tree/master
+Unrelated project that streams SC output over the World Wide Web: https://github.com/khilnani/supercollider.web/tree/master
 
 
 Hardware - 
