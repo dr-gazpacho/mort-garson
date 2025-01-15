@@ -8,6 +8,10 @@ sensor = adafruit_apds9960.apds9960.APDS9960(i2c)
 sensor.enable_proximity = True
 sensor.enable_color = True
 
+sensor.color_integration_time = 10 # borked this before - we CAN read faster than once per second
+# I am stupid, I was looking for a function I could run to set this time and just sort of didn't even think to just set the property
+# I, again, am stupid
+
 def main():
     # Create an OSC client
     # SuperCollider typically listens on port 57120 by default
@@ -22,14 +26,15 @@ def main():
     while(True):
         r, g, b, c = sensor.color_data
         print('Red: {0}, Green: {1}, Blue: {2}, Clear: {3}'.format(r, g, b, c))
-        client.send_message("/n_set", [1001, "freq", r])
         time.sleep(0.1)
-        client.send_message("/n_set", [1002, "freq", g])
-        time.sleep(0.1)
-        client.send_message("/n_set", [1003, "freq", b])
-        time.sleep(0.1)
-        client.send_message("/n_set", [1004, "freq", c])
-        time.sleep(0.1)
+        # client.send_message("/n_set", [1001, "freq", r])
+        # time.sleep(0.1)
+        # client.send_message("/n_set", [1002, "freq", g])
+        # time.sleep(0.1)
+        # client.send_message("/n_set", [1003, "freq", b])
+        # time.sleep(0.1)
+        # client.send_message("/n_set", [1004, "freq", c])
+        # time.sleep(0.1)
 
 if __name__ == "__main__":
     main()
