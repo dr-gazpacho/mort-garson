@@ -1,0 +1,8 @@
+- three position knob/three modes:
+ 1. drone mode: control pitch with light/proximity
+ 2. flex sensors: adsr envelope controlled by flex, controls one pre-programmed pattern
+ 3. combined: steps in synth determined by light/color; adsr envelope controlled by flex sensors
+ strech goal: cut offs, tambor, programmable "quality of sound"
+
+ - build GUI in python (find a nice library) - tkinter?
+ - build "SynthDef" and "OSCListeners"
