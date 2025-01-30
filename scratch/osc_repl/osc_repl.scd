@@ -1,4 +1,7 @@
 s.boot;
+OSCdef.freeAll;
+//until you reboot SC, current environment has references to processes on all servers
+currentEnvironment.clear;
 
 SynthDef.new(\basicSine, {
 	| freq = 440, out = 0 |
@@ -12,9 +15,16 @@ OSCFunc({
 	|msg, time, addr, recvPort|
     var name = msg[1];
 	var freq = msg[2];
+	//avoid overwriting references to synths
+	//if I make 'test' and then another 'test', the first UGEN keeps playing (cont.)
+	//I just just my reference to the first one
+	if(currentEnvironment.at(name.asSymbol).notNil) {
+		postln(currentEnvironment);
+        currentEnvironment.at(name.asSymbol).free;
+    };
 	//this would be the same I think as ~name
     currentEnvironment.put(
-        (name).asSymbol,
+        name.asSymbol,
         Synth(\basicSine, [\freq, freq])
     );
 }, '/synth/create');
