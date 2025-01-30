@@ -4,14 +4,18 @@ import time
 
 client = udp_client.SimpleUDPClient("127.0.0.1", 57120)
 
-root = tk.Tk()
-root.geometry("500x600")
-root.title("drone_mode")
+class MyGUI:
+    def __init__(self):
+        self.root = tk.Tk()
 
-label = tk.Label(root, text = "Hello World!", font = ("Arial", 18))
-label.pack(padx = 20, pady = 20)
+        self.label = tk.Label(self.root, text = "Your Message", font = ("Arial", 18))
+        self.label.pack(padx = 10, pady = 10)
 
-textbox = tk.Text(root, font = ("Arial", 16))
-textbox.pack()
+        self.textbox = tk.Text(self.root, height = 5, font = ("Arial", 16))
+        self.textbox.pack(padx = 10, pady = 10)
 
-root.mainloop()
+        self.check_state = tk.IntVar()
+        self.check = tk.Checkbutton(self.root, text = "Show Messagebox", font = ("Arial", 16), variable = self.check_state)
+        self.check.pack(padx = 10, pady = 10)
+
+        self.root.mainloop()
