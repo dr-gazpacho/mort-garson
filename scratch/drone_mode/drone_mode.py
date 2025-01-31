@@ -6,6 +6,7 @@ class DroneMode:
     def __init__(self):
         ## GUI
         self.root = tk.Tk()
+
         self.root.title("Drone Mode")
 
         # Title at the top
@@ -13,27 +14,36 @@ class DroneMode:
         self.title.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
 
         # Create a frame for the sliders
-        slider_frame = tk.Frame(self.root)
-        slider_frame.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
+        self.slider_frame = tk.Frame(self.root)
+        self.slider_frame.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
 
         # Labels for sliders
-        tk.Label(slider_frame, text="Red", font=("Arial", 12)).grid(row=0, column=0)
-        tk.Label(slider_frame, text="Blue", font=("Arial", 12)).grid(row=0, column=1)
-        tk.Label(slider_frame, text="Green", font=("Arial", 12)).grid(row=0, column=2)
-        tk.Label(slider_frame, text="Clear", font=("Arial", 12)).grid(row=0, column=3)
+        self.red_label = tk.Frame(self.slider_frame, bg = "red", width = 30, height = 30)
+        self.red_label.grid(row=0, column=0, sticky = "ew")
+
+        self.blue_label = tk.Frame(self.slider_frame, bg = "blue", width = 30, height = 30)
+        self.blue_label.grid(row=0, column=1, sticky = "ew")
+
+        self.green_label = tk.Frame(self.slider_frame, bg = "green", width = 30, height = 30)
+        self.green_label.grid(row=0, column=2, sticky = "ew")
+
+        self.clear_label = tk.Frame(self.slider_frame, bg = "white", width = 30, height = 30)
+        self.clear_label.grid(row=0, column=3, sticky = "ew")
+
+
 
         # Sliders
-        self.red_slider = tk.Scale(slider_frame, from_=0, to=42, command=self.print_color_state)
-        self.red_slider.grid(row=1, column=0, padx=10)
+        self.red_slider = tk.Scale(self.slider_frame, from_=100, to=0, command=self.print_color_state)
+        self.red_slider.grid(row=1, column=0, sticky = "ew")
 
-        self.blue_slider = tk.Scale(slider_frame, from_=0, to=42, command=self.print_color_state)
-        self.blue_slider.grid(row=1, column=1, padx=10)
+        self.blue_slider = tk.Scale(self.slider_frame, from_=100, to=0, command=self.print_color_state)
+        self.blue_slider.grid(row=1, column=1, sticky = "ew")
 
-        self.green_slider = tk.Scale(slider_frame, from_=0, to=42, command=self.print_color_state)
-        self.green_slider.grid(row=1, column=2, padx=10)
+        self.green_slider = tk.Scale(self.slider_frame, from_=100, to=0, command=self.print_color_state)
+        self.green_slider.grid(row=1, column=2, sticky = "ew")
 
-        self.clear_slider = tk.Scale(slider_frame, from_=0, to=42, command=self.print_color_state)
-        self.clear_slider.grid(row=1, column=3, padx=10)
+        self.clear_slider = tk.Scale(self.slider_frame, from_=100, to=0, command=self.print_color_state)
+        self.clear_slider.grid(row=1, column=3, sticky = "ew")
 
         ## OSC
         self.client = udp_client.SimpleUDPClient("127.0.0.1", 57120)
