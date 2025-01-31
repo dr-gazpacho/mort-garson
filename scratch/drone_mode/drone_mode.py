@@ -1,11 +1,11 @@
 from pythonosc import udp_client
 import tkinter as tk
+from tkinter import messagebox
 import time
 
-client = udp_client.SimpleUDPClient("127.0.0.1", 57120)
-
-class MyGUI:
+class DroneMode:
     def __init__(self):
+        ## GUI
         self.root = tk.Tk()
 
         self.label = tk.Label(self.root, text = "Your Message", font = ("Arial", 18))
@@ -21,9 +21,15 @@ class MyGUI:
         self.button = tk.Button(self.root, text = "Show Message", font = ("Arial", 18), command=self.show_message)
         self.button.pack(padx = 10, pady = 10)
 
+        ## OSC
+        self.client = udp_client.SimpleUDPClient("127.0.0.1", 57120)
+
+
         self.root.mainloop()
 
     def show_message(self):
-        print("Hello World!")
-
-MyGUI()
+        if self.check_state.get() == 0:
+            print(self.textbox.get("1.0", tk.END))
+        else: 
+            messagebox.showinfo(title = "Message", message = self.textbox.get("1.0", tk.END))
+DroneMode()
