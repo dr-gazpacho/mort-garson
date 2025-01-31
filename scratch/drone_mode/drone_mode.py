@@ -14,7 +14,8 @@ class DroneMode:
         self.title.grid(row = 0, column = 0, columnspan = 2, padx = 10, pady = 10)
 
         self.check_state = tk.IntVar()
-        self.check = tk.Checkbutton(text = "Motion Sensor Activated", font = ("Arial", 14))
+        self.check = tk.Checkbutton(self.root, text = "Motion Sensor Activated", font = ("Arial", 14), variable = self.check_state, command = self.show_check_state)
+        self.check.grid(row = 1, column = 0, columnspan = 2, padx = 10, pady = 10)
 
         # slider frame
         self.slider_frame = tk.Frame(self.root)
@@ -56,7 +57,7 @@ class DroneMode:
         self.root.mainloop()
 
     def show_check_state(self):
-        if self.check_state.get() == 0:
+        if self.check_state.get() == 1:
             print("checked")
     
     def print_color_state(self, _=None):
