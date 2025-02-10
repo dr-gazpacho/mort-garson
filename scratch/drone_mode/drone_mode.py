@@ -15,14 +15,14 @@ class DroneMode:
         self.title.grid(row = 0, column = 0, columnspan = 2, padx = 10, pady = 10)
 
         self.check_state = tk.IntVar()
-        self.check = tk.Checkbutton(self.root, text = "Motion Sensor Activated", font = ("Arial", 14), variable = self.check_state, command = self.show_check_state)
+        self.check = tk.Checkbutton(self.root, text = "Motion Sensor Activated", font = ("Arial", 14), variable = self.check_state, command = self.forward_all_values)
         self.check.grid(row = 1, column = 0, columnspan = 2, padx = 10, pady = 10)
 
         # slider frame
         self.slider_frame = tk.Frame(self.root)
-        self.slider_frame.grid(row = 3, column = 0, columnspan = 2, padx = 10, pady = 10)
+        self.slider_frame.grid(row = 4, column = 0, columnspan = 2, padx = 10, pady = 10)
 
-        # color square/labels
+        # color square/labels + volume
         self.red_label = tk.Frame(self.slider_frame, bg = "red", width = 30, height = 30)
         self.red_label.grid(row = 0, column = 0, sticky = "ew")
 
@@ -35,20 +35,26 @@ class DroneMode:
         self.clear_label = tk.Frame(self.slider_frame, bg = "white", width = 30, height = 30)
         self.clear_label.grid(row = 0, column = 3, sticky = "ew")
 
+        self.volume = tk.Label(self.slider_frame, text="Volume", font = ("Arial", 18))
+        self.volume.grid(row = 0, column = 4, sticky = "ew")
+
 
 
         # sliders
-        self.red_slider = tk.Scale(self.slider_frame, from_ = 100, to = 0, command = self.print_color_state)
+        self.red_slider = tk.Scale(self.slider_frame, from_ = 100, to = 0, command = self.forward_all_values)
         self.red_slider.grid(row = 1, column = 0, sticky = "ew")
 
-        self.blue_slider = tk.Scale(self.slider_frame, from_ = 100, to = 0, command = self.print_color_state)
+        self.blue_slider = tk.Scale(self.slider_frame, from_ = 100, to = 0, command = self.forward_all_values)
         self.blue_slider.grid(row = 1, column = 1, sticky = "ew")
 
-        self.green_slider = tk.Scale(self.slider_frame, from_ = 100, to = 0, command = self.print_color_state)
+        self.green_slider = tk.Scale(self.slider_frame, from_ = 100, to = 0, command = self.forward_all_values)
         self.green_slider.grid(row = 1, column = 2, sticky = "ew")
 
-        self.clear_slider = tk.Scale(self.slider_frame, from_ = 100, to = 0, command = self.print_color_state)
+        self.clear_slider = tk.Scale(self.slider_frame, from_ = 100, to = 0, command = self.forward_all_values)
         self.clear_slider.grid(row = 1, column = 3, sticky = "ew")
+
+        self.volume_slider = tk.Scale(self.slider_frame, from_ = 6, to = -40, command = self.forward_all_values)
+        self.volume_slider.grid(row = 1, column = 4, sticky = "ew")
 
         ## OSC
         self.client = udp_client.SimpleUDPClient("127.0.0.1", 57120)
@@ -57,16 +63,16 @@ class DroneMode:
 
         self.root.mainloop()
 
-    def show_check_state(self):
-        if self.check_state.get() == 1:
-            print("checked")
-    
-    def print_color_state(self, _=None):
+    def forward_all_values(self, _=None):
         red_value = self.red_slider.get()
         blue_value = self.blue_slider.get()
         green_value = self.green_slider.get()
         clear_value = self.clear_slider.get()
-        print(red_value, blue_value, green_value, clear_value)
+        volume_value = self.volume_slider.get()
+        is_checked = self.check_state.get() == 1
+
+        print(f"red_value: {red_value}, blue_value: {blue_value}, green_value: {green_value}, clear_value: {clear_value}, volume: {volume_value}, checked: {is_checked}")
+
 
 
 DroneMode()
