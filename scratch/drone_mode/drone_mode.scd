@@ -87,6 +87,6 @@ s.waitForBoot({
 
 
 		};
-	}, '/entry');
+	}, '/drone_mode');
 });
 )

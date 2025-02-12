@@ -95,7 +95,7 @@ class DroneMode:
         greatest_color = self.name_greatest_color(index)
         clear_as_single_digit = math.floor(clear_value / 10)
 
-        self.client.send_message("/entry", [red_value, blue_value, green_value, clear_value, volume_value, is_checked, clear_as_single_digit, greatest_color])
+        self.client.send_message("/drone_mode", [red_value, blue_value, green_value, clear_value, volume_value, is_checked, clear_as_single_digit, greatest_color])
 
 
 
