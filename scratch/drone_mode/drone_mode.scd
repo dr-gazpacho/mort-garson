@@ -35,15 +35,15 @@ s.waitForBoot({
 
 			currentEnvironment.put(
 				\red_fm,
-				Synth(\fm, [\freq, red])
+				Synth(\fm, [\freq, red.midicps])
 			);
 			currentEnvironment.put(
 				\blue_fm,
-				Synth(\fm, [\freq, blue])
+				Synth(\fm, [\freq, blue.midicps])
 			);
 			currentEnvironment.put(
 				\green_fm,
-				Synth(\fm, [\freq, green])
+				Synth(\fm, [\freq, green.midicps])
 			);
 
 		};
@@ -63,31 +63,15 @@ s.waitForBoot({
 				~v.volume = volume;
 			};
 
+			currentEnvironment.at(\red_fm).set(\freq, red.midicps);
+			currentEnvironment.at(\green_fm).set(\freq, green.midicps);
+			currentEnvironment.at(\blue_fm).set(\freq, blue.midicps);
+
 		};
 	}, '/entry');
 
-	OSCdef.new(\create, {
-		|msg, time, addr, recvPort|
-		var name = msg[1];
-		var freq = msg[2];
-
-		//avoid overwriting references to synths
-		//if I make 'test' and then another 'test', the first UGEN keeps playing (cont.)
-		//I just just my reference to the first one
-
-		if(currentEnvironment.at(name.asSymbol).notNil) {
-			currentEnvironment.at(name.asSymbol).free;
-			currentEnvironment.removeAt(name.asSymbol);
-		};
-		//this would be the same I think as ~name
-		currentEnvironment.put(
-			name.asSymbol,
-			Synth(\fm, [\freq, freq])
-		);
-    }, '/synth/create');
-
 	//update frequency of synth with given name
-	OSCdef.new(\update, {
+/*	OSCdef.new(\update, {
 		|msg, time, addr, recvPort|
 		var name = msg[1];
 		var val = msg[2];
@@ -98,23 +82,8 @@ s.waitForBoot({
 			"modulatorRatio", { currentEnvironment.at(name.asSymbol).set(\mRatio, val) },
 			{ "Unknown parameter".postln }
 		);
-	}, '/synth/params');
+	}, '/synth/params');*/
 
-    //remove synth with a given name
-    OSCdef.new(\free, {
-        |msg, time, addr, recvPort|
-        var name = msg[1];
-        if(currentEnvironment.at(name.asSymbol).notNil) {
-            currentEnvironment.at(name.asSymbol).free;
-			currentEnvironment.removeAt(name.asSymbol);
-        };
-    }, '/synth/free');
-
-	OSCdef.new(\volume, {
-		|msg, time, addr, recvPort|
-		var value = msg[1];
-		~v.volume = value;
-	}, '/volume')
 
 });
 )
