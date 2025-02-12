@@ -71,7 +71,9 @@ class DroneMode:
         volume_value = self.volume_slider.get()
         is_checked = self.check_state.get() == 1
 
-        print(f"red_value: {red_value}, blue_value: {blue_value}, green_value: {green_value}, clear_value: {clear_value}, volume: {volume_value}, checked: {is_checked}")
+        print(f"red_value: {red_value}, blue_value: {blue_value}, green_value: {green_value}, clear_value: {clear_value}, volume: {volume_value}, checked: {is_checked} \n")
+
+        self.client.send_message("/entry", [red_value, blue_value, green_value, clear_value, volume_value, is_checked])
 
 
 
