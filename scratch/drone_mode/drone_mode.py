@@ -1,6 +1,7 @@
 #this is badass
 from pythonosc import udp_client
 import tkinter as tk
+import math
 import time
 
 class DroneMode:
@@ -63,6 +64,15 @@ class DroneMode:
 
         self.root.mainloop()
 
+    def name_greatest_color(self, index):
+        match index:
+            case 0:
+                return "red"
+            case 1:
+                return "green"
+            case 2:
+                return "blue"
+
     def forward_all_values(self, _=None):
         red_value = self.red_slider.get()
         blue_value = self.blue_slider.get()
@@ -71,9 +81,21 @@ class DroneMode:
         volume_value = self.volume_slider.get()
         is_checked = self.check_state.get() == 1
 
-        print(f"red_value: {red_value}, blue_value: {blue_value}, green_value: {green_value}, clear_value: {clear_value}, volume: {volume_value}, checked: {is_checked} \n")
+        # some computes before we send
+        vals_as_list = [red_value, green_value, blue_value]
 
-        self.client.send_message("/entry", [red_value, blue_value, green_value, clear_value, volume_value, is_checked])
+        index = 0
+        current_max_value = vals_as_list[index]
+        for i in range(1, len(vals_as_list)):
+            if vals_as_list[i] > current_max_value:
+                current_max_value = vals_as_list[i]
+                index = i
+
+        
+        greatest_color = self.name_greatest_color(index)
+        clear_as_single_digit = math.floor(clear_value / 10)
+
+        self.client.send_message("/entry", [red_value, blue_value, green_value, clear_value, volume_value, is_checked, clear_as_single_digit, greatest_color])
 
 
 
