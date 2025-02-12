@@ -88,21 +88,5 @@ s.waitForBoot({
 
 		};
 	}, '/entry');
-
-	//update frequency of synth with given name
-/*	OSCdef.new(\update, {
-		|msg, time, addr, recvPort|
-		var name = msg[1];
-		var val = msg[2];
-		var property = msg[3];
-		switch(property.asString,
-			"carrier", { currentEnvironment.at(name.asSymbol).set(\freq, val) },
-			"carrierRatio", { currentEnvironment.at(name.asSymbol).set(\cRatio, val) },
-			"modulatorRatio", { currentEnvironment.at(name.asSymbol).set(\mRatio, val) },
-			{ "Unknown parameter".postln }
-		);
-	}, '/synth/params');*/
-
-
 });
 )
