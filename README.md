@@ -48,5 +48,6 @@ code/features into one entity without it getting too squirrley with global varia
   1. Just run `source venv/bin/activate` - if you named your virtual environment something else that's stupid now you can't just copy paste my commands
   1. Run the GUI with `python3 drone_mode.py`
   1. Quit the GUI when you're done
-
-As of writing this, the GUI just prints values to the console. I haven't written a *.scd file to handle any sort of drone UGen yet. Will update when I do.
+1. Open `drone_mode.py` in Supercollider, select all and run
+1. In the python GUI - when checkbox is checked, the synths are running. The converse is also true.
+1. Adjust the sliders to adjust the awful sounds
