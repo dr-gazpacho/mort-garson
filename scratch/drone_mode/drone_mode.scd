@@ -6,6 +6,7 @@ s.newBusAllocators;
 s.freeAll;
 OSCdef.freeAll;
 ~v = s.volume;
+~started = false;
 //until you reboot SC, current environment has references to processes on all servers
 
 s.waitForBoot({
@@ -29,10 +30,40 @@ s.waitForBoot({
 		volume = msg[5];
 		is_checked = msg[6];
 
-		postln(msg)
+		if(is_checked && ~started.not) {
+			~started = true;
 
-		postln(red, blue, green, clear, volume, is_checked);
+			currentEnvironment.put(
+				\red_fm,
+				Synth(\fm, [\freq, red])
+			);
+			currentEnvironment.put(
+				\blue_fm,
+				Synth(\fm, [\freq, blue])
+			);
+			currentEnvironment.put(
+				\green_fm,
+				Synth(\fm, [\freq, green])
+			);
 
+		};
+
+		if(is_checked.not && ~started) {
+			~started = false;
+
+			currentEnvironment.at(\red_fm).free;
+			currentEnvironment.at(\green_fm).free;
+			currentEnvironment.at(\blue_fm).free;
+
+		};
+
+		if(~started) {
+		// NOW this is where we start the mess
+			if(~v.volume != volume) {
+				~v.volume = volume;
+			};
+
+		};
 	}, '/entry');
 
 	OSCdef.new(\create, {
