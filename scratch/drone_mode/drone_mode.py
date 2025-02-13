@@ -1,6 +1,8 @@
 
 from pythonosc import udp_client
+from enum import Enum
 import tkinter as tk
+import math
 import time
 
 class DroneMode:
@@ -56,12 +58,25 @@ class DroneMode:
         self.volume_slider = tk.Scale(self.slider_frame, from_ = 6, to = -40, command = self.forward_all_values)
         self.volume_slider.grid(row = 1, column = 4, sticky = "ew")
 
+        # Constant to describe "mode", should be variable controlled by knob
+        self.mode_enum = Enum('Mode', [('DRONE', 1), ('MODE_TWO', 2), ('MODE_THREE', 3)])
+        self.mode = self.mode_enum.DRONE
+
         ## OSC
         self.client = udp_client.SimpleUDPClient("127.0.0.1", 57120)
 
 
 
         self.root.mainloop()
+
+    def name_greatest_color(self, index):
+        match index:
+            case 0:
+                return "red"
+            case 1:
+                return "green"
+            case 2:
+                return "blue"
 
     def forward_all_values(self, _=None):
         red_value = self.red_slider.get()
@@ -71,7 +86,23 @@ class DroneMode:
         volume_value = self.volume_slider.get()
         is_checked = self.check_state.get() == 1
 
-        print(f"red_value: {red_value}, blue_value: {blue_value}, green_value: {green_value}, clear_value: {clear_value}, volume: {volume_value}, checked: {is_checked}")
+        # some trivial computes before we send
+        vals_as_list = [red_value, green_value, blue_value]
+
+        index = 0
+        current_max_value = vals_as_list[index]
+        for i in range(1, len(vals_as_list)):
+            if vals_as_list[i] > current_max_value:
+                current_max_value = vals_as_list[i]
+                index = i
+
+        
+        greatest_color = self.name_greatest_color(index)
+        clear_as_single_digit = math.floor(clear_value / 10)
+
+        # A strategy: if drone_mode is enabled, send messages to /drone_mode OSC listener e.g. if mode.x_mode -> /x_mode elif mode.y_mode -> /y_mode
+        if self.mode == self.mode_enum.DRONE:
+            self.client.send_message("/drone_mode", [red_value, blue_value, green_value, clear_value, volume_value, is_checked, clear_as_single_digit, greatest_color])
 
 
 
