@@ -1,4 +1,4 @@
-#this is badass
+
 from pythonosc import udp_client
 import tkinter as tk
 import time
