@@ -164,8 +164,8 @@ class DroneMode:
 
     def forward_all_values(self, _=None):
         # mode and volume
-        system_mode = self.mode.get()
-        volume_value = self.volume.get()
+        mode_value = self.mode.get()
+        volume_value= self.volume.get()
 
         # APDS 
         red_value = self.sliderRed.get()
@@ -182,7 +182,7 @@ class DroneMode:
 
         print(red_value, blue_value, green_value, clear_value)
         print(flex_one, flex_two, flex_three, flex_four)
-        print(system_mode, volume_value)
+        print(mode_value, volume_value)
 
         # # some trivial computes before we send
         # vals_as_list = [red_value, green_value, blue_value]
