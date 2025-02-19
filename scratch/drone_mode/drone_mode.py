@@ -21,9 +21,14 @@ class DroneMode:
         # https://www.adafruit.com/product/182
         self.FLEX_MIN = 10000
         self.FLEX_MAX = 20000
+
+        self.VOLUME_MIN = -40
+        self.VOLUME_MAX = 6
+
         # Initialize GUI
         self.tkRoot = tk.Tk()
         self.tkRoot.title=('InputSimulated')
+
         self.mode = tk.IntVar(self.tkRoot, 1)
         self.flex1 = tk.IntVar(self.tkRoot, self.FLEX_MIN)
         self.flex2 = tk.IntVar(self.tkRoot, self.FLEX_MIN)
@@ -34,8 +39,9 @@ class DroneMode:
         self.green = tk.IntVar(self.tkRoot, self.APDS_COLOR_MIN)
         self.clear = tk.IntVar(self.tkRoot, self.APDS_COLOR_MIN)
         self.prox = tk.IntVar(self.tkRoot, self.APDS_PROXIMITY_MIN)
-
+        self.volume = tk.IntVar(self.tkRoot, 0)
         ## GUI
+
         # Create frames
         self.content = ttk.Frame(self.tkRoot, padding=12)
         self.frameHeader = ttk.Frame(self.content, borderwidth=5, relief="ridge", width=500, height=100)
@@ -47,6 +53,9 @@ class DroneMode:
         self.mode1 = ttk.Radiobutton(self.frameHeader, text='I', variable=self.mode, value=1, command=self.forward_all_values)
         self.mode2 = ttk.Radiobutton(self.frameHeader, text='II', variable=self.mode, value=2, command=self.forward_all_values)
         self.mode3 = ttk.Radiobutton(self.frameHeader, text='III', variable=self.mode, value=3, command=self.forward_all_values)
+        self.volume = ttk.Scale(self.frameHeader, orient=tk.VERTICAL, from_=self.VOLUME_MAX, to=self.VOLUME_MIN, variable=self.volume, length=50, command=self.forward_all_values)
+        self.label_volume = ttk.Label(self.frameHeader, text="vol")
+
         self.labelMode = ttk.Label(self.frameHeader, text="Mode")
 
         # Create APDS9960 I/O
@@ -77,7 +86,7 @@ class DroneMode:
         # Set up our frame sizes
         self.content.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.frameHeader.grid(column=0, row=0, columnspan=5, rowspan=1, sticky=(tk.N, tk.S, tk.E, tk.W))
-        self.frame9960.grid(column=3, row=0, columnspan=2, rowspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.frame9960.grid(column=4, row=0, columnspan=2, rowspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.frameFlex.grid(column=0, row=1, columnspan=5, rowspan=2, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.frameLabelFlex.grid(column=0, row=1, columnspan=4, rowspan=1, sticky=(tk.N, tk.S, tk.E, tk.W))
 
@@ -85,6 +94,8 @@ class DroneMode:
         self.mode1.grid(column=0, row=0)
         self.mode2.grid(column=1, row=0)
         self.mode3.grid(column=2, row=0)
+        self.volume.grid(column=3, row=0)
+        self.label_volume.grid(column=3, row=1)
         self.labelMode.grid(column=1, row=1)
 
         # Position APDS9960 I/O in header frame
@@ -134,7 +145,7 @@ class DroneMode:
 
         self.frameLabelFlex.columnconfigure(0, weight=4)
         self.frameLabelFlex.rowconfigure(0, weight=1)    
-        
+
         ## OSC
         self.client = udp_client.SimpleUDPClient("127.0.0.1", 57120)
 
@@ -152,27 +163,26 @@ class DroneMode:
                 return "blue"
 
     def forward_all_values(self, _=None):
-        #Mode
+        # mode and volume
         system_mode = self.mode.get()
+        volume_value = self.volume.get()
 
-        #APDS values
+        # APDS 
         red_value = self.sliderRed.get()
         blue_value = self.sliderBlue.get()
         green_value = self.sliderGreen.get()
         clear_value = self.sliderClear.get()
         proximity_value = self.prox.get()
 
-        #Flex values
+        # flex values
         flex_one = self.flex1.get()
         flex_two = self.flex2.get()
         flex_three = self.flex3.get()
         flex_four = self.flex4.get()
 
-        # volume_value = self.volume_slider.get()
-        # is_checked = self.check_state.get() == 1
         print(red_value, blue_value, green_value, clear_value)
         print(flex_one, flex_two, flex_three, flex_four)
-        print(system_mode)
+        print(system_mode, volume_value)
 
         # # some trivial computes before we send
         # vals_as_list = [red_value, green_value, blue_value]
