@@ -44,9 +44,9 @@ class DroneMode:
         self.frameLabelFlex = ttk.Frame(self.frameFlex, width=300, height=50)
 
         # Create Mode I/O
-        self.mode1 = ttk.Radiobutton(self.frameHeader, text='I', variable=self.mode, value=1)
-        self.mode2 = ttk.Radiobutton(self.frameHeader, text='II', variable=self.mode, value=2)
-        self.mode3 = ttk.Radiobutton(self.frameHeader, text='III', variable=self.mode, value=3)
+        self.mode1 = ttk.Radiobutton(self.frameHeader, text='I', variable=self.mode, value=1, command=self.forward_all_values)
+        self.mode2 = ttk.Radiobutton(self.frameHeader, text='II', variable=self.mode, value=2, command=self.forward_all_values)
+        self.mode3 = ttk.Radiobutton(self.frameHeader, text='III', variable=self.mode, value=3, command=self.forward_all_values)
         self.labelMode = ttk.Label(self.frameHeader, text="Mode")
 
         # Create APDS9960 I/O
@@ -68,10 +68,10 @@ class DroneMode:
         self.labelProx = ttk.Label(self.frame9960, text="P")
 
         # Create flex resistor I/O
-        self.sliderFlex1 = ttk.Scale(self.frameFlex, orient=tk.VERTICAL, length=200, from_=self.FLEX_MAX, to=self.FLEX_MIN, variable=self.flex1)
-        self.sliderFlex2 = ttk.Scale(self.frameFlex, orient=tk.VERTICAL, length=200, from_=self.FLEX_MAX, to=self.FLEX_MIN, variable=self.flex2)
-        self.sliderFlex3 = ttk.Scale(self.frameFlex, orient=tk.VERTICAL, length=200, from_=self.FLEX_MAX, to=self.FLEX_MIN, variable=self.flex3)
-        self.sliderFlex4 = ttk.Scale(self.frameFlex, orient=tk.VERTICAL, length=200, from_=self.FLEX_MAX, to=self.FLEX_MIN, variable=self.flex4)
+        self.sliderFlex1 = ttk.Scale(self.frameFlex, orient=tk.VERTICAL, length=200, from_=self.FLEX_MAX, to=self.FLEX_MIN, variable=self.flex1, command=self.forward_all_values)
+        self.sliderFlex2 = ttk.Scale(self.frameFlex, orient=tk.VERTICAL, length=200, from_=self.FLEX_MAX, to=self.FLEX_MIN, variable=self.flex2, command=self.forward_all_values)
+        self.sliderFlex3 = ttk.Scale(self.frameFlex, orient=tk.VERTICAL, length=200, from_=self.FLEX_MAX, to=self.FLEX_MIN, variable=self.flex3, command=self.forward_all_values)
+        self.sliderFlex4 = ttk.Scale(self.frameFlex, orient=tk.VERTICAL, length=200, from_=self.FLEX_MAX, to=self.FLEX_MIN, variable=self.flex4, command=self.forward_all_values)
         self.labelFlex = ttk.Label(self.frameLabelFlex, text="Flex Resistors")
 
         # Set up our frame sizes
@@ -134,11 +134,7 @@ class DroneMode:
 
         self.frameLabelFlex.columnconfigure(0, weight=4)
         self.frameLabelFlex.rowconfigure(0, weight=1)    
-
-        # Constant to describe "mode", should be variable controlled by knob
-        self.mode_enum = Enum('Mode', [('DRONE', 1), ('MODE_TWO', 2), ('MODE_THREE', 3)])
-        self.mode = self.mode_enum.DRONE
-
+        
         ## OSC
         self.client = udp_client.SimpleUDPClient("127.0.0.1", 57120)
 
@@ -156,15 +152,27 @@ class DroneMode:
                 return "blue"
 
     def forward_all_values(self, _=None):
-        # red_value = self.red_slider.get()
-        # blue_value = self.blue_slider.get()
-        # green_value = self.green_slider.get()
-        # clear_value = self.clear_slider.get()
+        #Mode
+        system_mode = self.mode.get()
+
+        #APDS values
+        red_value = self.sliderRed.get()
+        blue_value = self.sliderBlue.get()
+        green_value = self.sliderGreen.get()
+        clear_value = self.sliderClear.get()
+        proximity_value = self.prox.get()
+
+        #Flex values
+        flex_one = self.flex1.get()
+        flex_two = self.flex2.get()
+        flex_three = self.flex3.get()
+        flex_four = self.flex4.get()
+
         # volume_value = self.volume_slider.get()
         # is_checked = self.check_state.get() == 1
-
-        red_two = self.sliderRed.get()
-        print(red_two)
+        print(red_value, blue_value, green_value, clear_value)
+        print(flex_one, flex_two, flex_three, flex_four)
+        print(system_mode)
 
         # # some trivial computes before we send
         # vals_as_list = [red_value, green_value, blue_value]
