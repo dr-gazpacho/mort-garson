@@ -12,4 +12,4 @@ class DroneUtils():
     # use in conjunction with apds_light_to_midi, would give opposite effect
     # this will likely be useless
     def flip_midi(self, midi_value):
-        return 128 - midi_value
+        return 108 - midi_value + 20
