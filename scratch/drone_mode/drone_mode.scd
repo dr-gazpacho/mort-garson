@@ -73,13 +73,13 @@ s.waitForBoot({
 			postln(greatest_color.class);
 			switch(greatest_color,
 				\red, {
-					~red_fm.set(\cRatio, clear_single);
+					~red_fm.set(\cRatio, white_single);
 				},
 				\green, {
-					~green_fm.set(\cRatio, clear_single);
+					~green_fm.set(\cRatio, white_single);
 				},
 				\blue, {
-					~blue_fm.set(\cRatio, clear_single);
+					~blue_fm.set(\cRatio, white_single);
 				}
 			);
 			*/

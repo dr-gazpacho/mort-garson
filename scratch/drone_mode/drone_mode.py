@@ -43,7 +43,7 @@ class DroneMode:
         self.red = tk.IntVar(self.tkRoot, self.APDS_COLOR_MIN)
         self.blue = tk.IntVar(self.tkRoot, self.APDS_COLOR_MIN)
         self.green = tk.IntVar(self.tkRoot, self.APDS_COLOR_MIN)
-        self.clear = tk.IntVar(self.tkRoot, self.APDS_COLOR_MIN)
+        self.white = tk.IntVar(self.tkRoot, self.APDS_COLOR_MIN)
         self.prox = tk.IntVar(self.tkRoot, self.APDS_PROXIMITY_MIN)
         self.volume = tk.IntVar(self.tkRoot, 0)
         
@@ -67,7 +67,7 @@ class DroneMode:
         self.sliderRed = ttk.Scale(self.frame9960, orient=tk.VERTICAL, length=50, from_=self.APDS_COLOR_MAX, to=self.APDS_COLOR_MIN, variable=self.red, command=self.forward_all_values)
         self.sliderGreen = ttk.Scale(self.frame9960, orient=tk.VERTICAL, length=50, from_=self.APDS_COLOR_MAX, to=self.APDS_COLOR_MIN, variable=self.blue, command=self.forward_all_values)
         self.sliderBlue = ttk.Scale(self.frame9960, orient=tk.VERTICAL, length=50, from_=self.APDS_COLOR_MAX, to=self.APDS_COLOR_MIN, variable=self.green, command=self.forward_all_values)
-        self.sliderClear = ttk.Scale(self.frame9960, orient=tk.VERTICAL, length=50, from_=self.APDS_COLOR_MAX, to=self.APDS_COLOR_MIN, variable=self.clear, command=self.forward_all_values)
+        self.sliderWhite = ttk.Scale(self.frame9960, orient=tk.VERTICAL, length=50, from_=self.APDS_COLOR_MAX, to=self.APDS_COLOR_MIN, variable=self.white, command=self.forward_all_values)
         self.sliderProx = ttk.Scale(self.frame9960, orient=tk.VERTICAL, length=50, from_=self.APDS_PROXIMITY_MAX, to=self.APDS_PROXIMITY_MIN, variable=self.prox, command=self.forward_all_values)
         self.styleRed = ttk.Style()
         self.styleGreen = ttk.Style()
@@ -78,7 +78,7 @@ class DroneMode:
         self.labelRed = ttk.Label(self.frame9960, text="R", style="Red.TLabel")
         self.labelGreen = ttk.Label(self.frame9960, text="G", style="Green.TLabel")
         self.labelBlue = ttk.Label(self.frame9960, text="B", style="Blue.TLabel")
-        self.labelClear = ttk.Label(self.frame9960, text="C")
+        self.labelWhite = ttk.Label(self.frame9960, text="C")
         self.labelProx = ttk.Label(self.frame9960, text="P")
 
         # Create flex resistor I/O
@@ -107,12 +107,12 @@ class DroneMode:
         self.sliderRed.grid(column=0, row=0)
         self.sliderGreen.grid(column=1, row=0)
         self.sliderBlue.grid(column=2, row=0)
-        self.sliderClear.grid(column=3, row=0)
+        self.sliderWhite.grid(column=3, row=0)
         self.sliderProx.grid(column=4, row=0)
         self.labelRed.grid(column=0, row=1)
         self.labelGreen.grid(column=1, row=1)
         self.labelBlue.grid(column=2, row=1)
-        self.labelClear.grid(column=3, row=1)
+        self.labelWhite.grid(column=3, row=1)
         self.labelProx.grid(column=4, row=1)
 
         # Position flex resistor I/O in flex frame
@@ -155,11 +155,10 @@ class DroneMode:
 
     def apds_light_to_midi(self, apds_reading):
         """
-        Convert APDS values to MIDI;
-        Floor: 20, Ceiling: 108;
+        Convert APDS values to MIDI \n
+        Floor: 20, Ceiling: 108 \n
         APDS_COLOR_MIN -> 20, APDS_COLOR_MAX -> 108
         """
-        print(int(apds_reading * 88 / self.APDS_COLOR_MAX) + 20)
         return int(apds_reading * 88 / self.APDS_COLOR_MAX) + 20
     
     def mirror_midi(self, midi_value):
@@ -168,7 +167,7 @@ class DroneMode:
     
     def apds_light_to_low_freq(self, apds_reading):
         """
-        Convert APDS values to LFO values;
+        Convert APDS values to LFO values \n
         Floor: 1, Ceiling: 20
         
         """
@@ -182,8 +181,16 @@ class DroneMode:
                 return "green"
             case 2:
                 return "blue"
+            
+    def read_values(self, _=None, print_vals=False):
+        """
+        read all values and return a dictionary \n
+        set print_vals=True to print well-formatted information
+        """
 
-    def forward_all_values(self, _=None):
+        # I think one of the tkinter components has some implicit parameter,
+        # which is why i need to do this defaulting _=None thing in the arguments
+
         # mode and volume
         mode_value = self.mode.get()
         volume_value = self.volume.get()
@@ -192,7 +199,7 @@ class DroneMode:
         red_value = self.sliderRed.get()
         blue_value = self.sliderBlue.get()
         green_value = self.sliderGreen.get()
-        clear_value = self.sliderClear.get()
+        white_value = self.sliderWhite.get()
         proximity_value = self.prox.get()
 
         # flex values
@@ -201,45 +208,77 @@ class DroneMode:
         flex_three = self.flex3.get()
         flex_four = self.flex4.get()
 
+        
+        # print formatted vals when flag is set
+        if print_vals:
+            print("\n" + "="*50)
+            print("CURRENT DRONE MODE VALUES:")
+            print("="*50)
+            
+            print("\n--- Mode Settings ---")
+            print(f"Mode:           {mode_value} (Mode {'I' if mode_value == 1 else 'II' if mode_value == 2 else 'III'})")
+            print(f"Volume:         {volume_value} dB")
+            
+            print("\n--- APDS9960 Sensor Values ---")
+            print(f"Red:            {red_value:,}")
+            print(f"Green:          {green_value:,}")
+            print(f"Blue:           {blue_value:,}")
+            print(f"white:          {white_value:,}")
+            print(f"Proximity:      {proximity_value}")
+            
+            print("\n--- Flex Resistor Values ---")
+            print(f"Flex 1:         {flex_one:,}")
+            print(f"Flex 2:         {flex_two:,}")
+            print(f"Flex 3:         {flex_three:,}")
+            print(f"Flex 4:         {flex_four:,}")
+            print("="*50)
+
+        return {
+            "mode": mode_value,
+            "volume": volume_value,
+            "apds": {
+                "red": red_value,
+                "green": green_value,
+                "blue": blue_value,
+                "white": white_value,
+                "proximity": proximity_value
+            },
+            "flex": {
+                "flex_one": flex_one,
+                "flex_two": flex_two,
+                "flex_three": flex_three,
+                "flex_four": flex_four,
+            }
+
+        }
+
+
+    def forward_all_values(self, _=None):
+        """
+        read and send all values to SC \n
+        I think one of the tkinter components has some implicit parameter, \n
+        which is why i need to do this defaulting _=None thing in the arguments
+        """
+        current_state = self.read_values(print_vals=True)
+
         osc_message = [
-            "mode", mode_value,
-            "volume", volume_value,
-            "red", self.apds_light_to_midi(red_value),
-            "blue", self.apds_light_to_midi(blue_value),
-            "green", self.apds_light_to_midi(green_value),
-            "clear", clear_value,
-            "proximity", proximity_value,
-            "flex_one", flex_one,
-            "flex_two", flex_two,
-            "flex_three", flex_three,
-            "flex_four", flex_four
+            "mode", current_state["mode"],
+            "volume", current_state["volume"],
+            "red", self.apds_light_to_midi(current_state.get("apds").get("red")),
+            "green", self.apds_light_to_midi(current_state.get("apds").get("green")),
+            "blue", self.apds_light_to_midi(current_state.get("apds").get("blue")),
+            "white", current_state.get("apds").get("white"),
+            "proximity", current_state.get("apds").get("proximity"),
+            "flex_one", current_state.get("flex").get("flex_one"),
+            "flex_two", current_state.get("flex").get("flex_two"),
+            "flex_three", current_state.get("flex").get("flex_three"),
+            "flex_four", current_state.get("flex").get("flex_four")
         ]
 
-        # Format the output with clear section headers and aligned values
-        print("\n" + "="*50)
-        print("CURRENT DRONE MODE VALUES:")
-        print("="*50)
-        
-        print("\n--- Mode Settings ---")
-        print(f"Mode:           {mode_value} (Mode {'I' if mode_value == 1 else 'II' if mode_value == 2 else 'III'})")
-        print(f"Volume:         {volume_value} dB")
-        
-        print("\n--- APDS9960 Sensor Values ---")
-        print(f"Red:            {red_value:,}")
-        print(f"Green:          {green_value:,}")
-        print(f"Blue:           {blue_value:,}")
-        print(f"Clear:          {clear_value:,}")
-        print(f"Proximity:      {proximity_value}")
-        
-        print("\n--- Flex Resistor Values ---")
-        print(f"Flex 1:         {flex_one:,}")
-        print(f"Flex 2:         {flex_two:,}")
-        print(f"Flex 3:         {flex_three:,}")
-        print(f"Flex 4:         {flex_four:,}")
-        print("="*50)
-
-        if mode_value == 1:
+        if current_state["mode"] == 1:
             self.client.send_message("/drone_mode", osc_message)
+
+        
         # # some trivial computes before we send
         # vals_as_list = [red_value, green_value, blue_value]
 
@@ -252,11 +291,11 @@ class DroneMode:
 
         
         # greatest_color = self.name_greatest_color(index)
-        # clear_as_single_digit = math.floor(clear_value / 10)
+        # white_as_single_digit = math.floor(white_value / 10)
 
         # # A strategy: if drone_mode is enabled, send messages to /drone_mode OSC listener e.g. if mode.x_mode -> /x_mode elif mode.y_mode -> /y_mode
         # if self.mode == self.mode_enum.DRONE:
-        #     self.client.send_message("/drone_mode", [red_value, blue_value, green_value, clear_value, volume_value, is_checked, clear_as_single_digit, greatest_color])
+        #     self.client.send_message("/drone_mode", [red_value, blue_value, green_value, white_value, volume_value, is_checked, white_as_single_digit, greatest_color])
 
 def run_gui():
     """Function to run the GUI for normal operation"""
