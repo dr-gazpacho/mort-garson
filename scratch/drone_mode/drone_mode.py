@@ -1,4 +1,3 @@
-
 from pythonosc import udp_client
 from enum import Enum
 import tkinter as tk
@@ -8,7 +7,7 @@ import time
 
 class DroneMode:
 
-    def __init__(self):
+    def __init__(self, start_gui=True):
         # Globals
         # https://learn.adafruit.com/adafruit-apds9960-breakout/circuitpython#color-reading-2980832
         self.APDS_COLOR_MIN = 0
@@ -25,7 +24,14 @@ class DroneMode:
         self.VOLUME_MIN = -40
         self.VOLUME_MAX = 6
 
-        # Initialize GUI
+        # OSC
+        self.client = udp_client.SimpleUDPClient("127.0.0.1", 57120)
+
+        if start_gui:
+            self.initialize_gui()
+
+    def initialize_gui(self):
+        """use globals to initialize the GUI and launch"""
         self.tkRoot = tk.Tk()
         self.tkRoot.title=('InputSimulated')
 
@@ -40,8 +46,7 @@ class DroneMode:
         self.clear = tk.IntVar(self.tkRoot, self.APDS_COLOR_MIN)
         self.prox = tk.IntVar(self.tkRoot, self.APDS_PROXIMITY_MIN)
         self.volume = tk.IntVar(self.tkRoot, 0)
-        ## GUI
-
+        
         # Create frames
         self.content = ttk.Frame(self.tkRoot, padding=12)
         self.frameHeader = ttk.Frame(self.content, borderwidth=5, relief="ridge", width=500, height=100)
@@ -144,14 +149,29 @@ class DroneMode:
         self.frameFlex.rowconfigure(0, weight=3)
 
         self.frameLabelFlex.columnconfigure(0, weight=4)
-        self.frameLabelFlex.rowconfigure(0, weight=1)    
-
-        ## OSC
-        self.client = udp_client.SimpleUDPClient("127.0.0.1", 57120)
-
-
+        self.frameLabelFlex.rowconfigure(0, weight=1)
 
         self.tkRoot.mainloop()
+
+    def apds_light_to_midi(self, apds_reading):
+        """
+        Convert APDS values to MIDI;
+        Floor: 20, Ceiling: 108;
+        APDS_COLOR_MIN -> 20, APDS_COLOR_MAX -> 108
+        """
+        return int(apds_reading * 88 / self.APDS_COLOR_MAX) + 20
+    
+    def mirror_midi(self, midi_value):
+        """Mirrors MIDI; 40 -> 88, 20 -> 108"""
+        return 128 - midi_value
+    
+    def apds_light_to_low_freq(self, apds_reading):
+        """
+        Convert APDS values to LFO values;
+        Floor: 1, Ceiling: 20
+        
+        """
+        return int(apds_reading * 19 / self.APDS_COLOR_MAX) + 1
 
     def name_greatest_color(self, index):
         match index:
@@ -202,6 +222,9 @@ class DroneMode:
         # if self.mode == self.mode_enum.DRONE:
         #     self.client.send_message("/drone_mode", [red_value, blue_value, green_value, clear_value, volume_value, is_checked, clear_as_single_digit, greatest_color])
 
+def run_gui():
+    """Function to run the GUI for normal operation"""
+    DroneMode()
 
-
-DroneMode()
+if __name__ == "__main__":
+    run_gui()
