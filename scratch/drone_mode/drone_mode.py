@@ -159,6 +159,7 @@ class DroneMode:
         Floor: 20, Ceiling: 108;
         APDS_COLOR_MIN -> 20, APDS_COLOR_MAX -> 108
         """
+        print(int(apds_reading * 88 / self.APDS_COLOR_MAX) + 20)
         return int(apds_reading * 88 / self.APDS_COLOR_MAX) + 20
     
     def mirror_midi(self, midi_value):
@@ -200,6 +201,20 @@ class DroneMode:
         flex_three = self.flex3.get()
         flex_four = self.flex4.get()
 
+        osc_message = [
+            "mode", mode_value,
+            "volume", volume_value,
+            "red", self.apds_light_to_midi(red_value),
+            "blue", self.apds_light_to_midi(blue_value),
+            "green", self.apds_light_to_midi(green_value),
+            "clear", clear_value,
+            "proximity", proximity_value,
+            "flex_one", flex_one,
+            "flex_two", flex_two,
+            "flex_three", flex_three,
+            "flex_four", flex_four
+        ]
+
         # Format the output with clear section headers and aligned values
         print("\n" + "="*50)
         print("CURRENT DRONE MODE VALUES:")
@@ -224,7 +239,7 @@ class DroneMode:
         print("="*50)
 
         if mode_value == 1:
-            self.client.send_message("/drone-mode", [])
+            self.client.send_message("/drone_mode", osc_message)
         # # some trivial computes before we send
         # vals_as_list = [red_value, green_value, blue_value]
 

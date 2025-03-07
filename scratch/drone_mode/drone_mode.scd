@@ -22,38 +22,35 @@ s.waitForBoot({
 
 	OSCdef.new(\entry, {
 		|msg, time, addr, recvPort|
-		var red, blue, green, clear, volume, is_checked, clear_single, greatest_color;
-		//these are the raw values
-		red = msg[1];
-		blue = msg[2];
-		green = msg[3];
-		clear = msg[4];
-		volume = msg[5];
-		is_checked = msg[6];
-		//and the computed values
-		clear_single = msg[7];
-		greatest_color = msg[8];
+		var params = Dictionary.new, i;
+
+		// Skip first element (OSC address)
+		i = 1;
+		while({i < msg.size}, {
+			params.put(msg[i].asSymbol, msg[i+1]);
+			i = i + 2;
+		});
 
 
-		if(is_checked && ~started.not) {
+		if(params[\proximity] > 0 && ~started.not) {
 			~started = true;
 
 			currentEnvironment.put(
 				\red_fm,
-				Synth(\fm, [\freq, red.midicps])
+				Synth(\fm, [\freq, params[\red].midicps])
 			);
 			currentEnvironment.put(
 				\blue_fm,
-				Synth(\fm, [\freq, blue.midicps])
+				Synth(\fm, [\freq, params[\blue].midicps])
 			);
 			currentEnvironment.put(
 				\green_fm,
-				Synth(\fm, [\freq, green.midicps])
+				Synth(\fm, [\freq, params[\green].midicps])
 			);
 
 		};
 
-		if(is_checked.not && ~started) {
+		if(params[\proximity] == 0 && ~started) {
 			~started = false;
 			s.freeAll;
 			//~red_fm.free;
@@ -64,14 +61,15 @@ s.waitForBoot({
 
 		if(~started) {
 		// NOW this is where we start the mess
-			if(~v.volume != volume) {
-				~v.volume = volume;
+			if(~v.volume != params[\volume]) {
+				~v.volume = params[\volume];
 			};
 
-			~red_fm.set(\freq, red.midicps, \mRatio, clear_single);
-			~green_fm.set(\freq, green.midicps, \mRatio, clear_single);
-			~blue_fm.set(\freq, blue.midicps, \mRatio, clear_single);
+			~red_fm.set(\freq, params[\red].midicps);
+			~green_fm.set(\freq, params[\green].midicps);
+			~blue_fm.set(\freq, params[\blue].midicps);
 
+			/*
 			postln(greatest_color.class);
 			switch(greatest_color,
 				\red, {
@@ -83,7 +81,8 @@ s.waitForBoot({
 				\blue, {
 					~blue_fm.set(\cRatio, clear_single);
 				}
-		);
+			);
+			*/
 
 
 		};
