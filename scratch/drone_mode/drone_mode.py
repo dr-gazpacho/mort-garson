@@ -185,7 +185,7 @@ class DroneMode:
     def forward_all_values(self, _=None):
         # mode and volume
         mode_value = self.mode.get()
-        volume_value= self.volume.get()
+        volume_value = self.volume.get()
 
         # APDS 
         red_value = self.sliderRed.get()
@@ -200,10 +200,31 @@ class DroneMode:
         flex_three = self.flex3.get()
         flex_four = self.flex4.get()
 
-        print(red_value, blue_value, green_value, clear_value)
-        print(flex_one, flex_two, flex_three, flex_four)
-        print(mode_value, volume_value)
+        # Format the output with clear section headers and aligned values
+        print("\n" + "="*50)
+        print("CURRENT DRONE MODE VALUES:")
+        print("="*50)
+        
+        print("\n--- Mode Settings ---")
+        print(f"Mode:           {mode_value} (Mode {'I' if mode_value == 1 else 'II' if mode_value == 2 else 'III'})")
+        print(f"Volume:         {volume_value} dB")
+        
+        print("\n--- APDS9960 Sensor Values ---")
+        print(f"Red:            {red_value:,}")
+        print(f"Green:          {green_value:,}")
+        print(f"Blue:           {blue_value:,}")
+        print(f"Clear:          {clear_value:,}")
+        print(f"Proximity:      {proximity_value}")
+        
+        print("\n--- Flex Resistor Values ---")
+        print(f"Flex 1:         {flex_one:,}")
+        print(f"Flex 2:         {flex_two:,}")
+        print(f"Flex 3:         {flex_three:,}")
+        print(f"Flex 4:         {flex_four:,}")
+        print("="*50)
 
+        if mode_value == 1:
+            self.client.send_message("/drone-mode", [])
         # # some trivial computes before we send
         # vals_as_list = [red_value, green_value, blue_value]
 
