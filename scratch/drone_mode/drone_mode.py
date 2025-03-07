@@ -153,6 +153,8 @@ class DroneMode:
 
         self.tkRoot.mainloop()
 
+    # Utility Methods - read, send, process, etc.
+
     def apds_light_to_midi(self, apds_reading):
         """
         Convert APDS values to MIDI \n
