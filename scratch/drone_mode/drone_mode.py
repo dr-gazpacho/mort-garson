@@ -162,14 +162,42 @@ class DroneMode:
 
     def apds_light_to_midi(self, apds_reading):
         """
+        Takes APDS reading as argument \n
+        Returns int between 20 and 108 \n
         Convert APDS values to MIDI \n
         Floor: 20, Ceiling: 108 \n
         APDS_COLOR_MIN -> 20, APDS_COLOR_MAX -> 108
         """
         return int(apds_reading * 88 / self.APDS_COLOR_MAX) + 20
     
-    def mirror_midi(self, midi_value):
-        """Mirrors MIDI; 40 -> 88, 20 -> 108"""
+    def midi_to_pitch_class(self, apds_as_midi):
+        """
+        Takes MIDI number as argument \n
+        Returns pitch class, an int between 0 and 11 \n
+        Set theory represents pitches on a \n
+        scale 0-11 where C = 0 regardless of octave
+        """
+        return int(apds_as_midi % 12)
+    
+    def invert_pitch_class(self, apds_as_pitch_class):
+        """
+        Takes pitch class as argument \n
+        Returns pitch class inverted around axis \n
+        apds_as_pitch_class should be a number 0-11
+        """
+        return (12 - apds_as_pitch_class) % 12
+    
+    def find_interval_class(self, pitch_class_a, pitch_class_b):
+        """
+        Takes two pitch classes as an argument \n
+        Returns interval class, int 0 - 6 \n
+        In set theory, there are only 6 possible intervals \n
+        Seven intervals if you count no interval as an interval
+        """
+        return min((pitch_class_b - pitch_class_a) % 12, (pitch_class_a - pitch_class_b) % 12)
+    
+    def invert_midi(self, midi_value):
+        """inverts MIDI in the spirit of set theory; 40 -> 88, 20 -> 108"""
         return 128 - midi_value
     
     def apds_light_to_low_freq(self, apds_reading):
