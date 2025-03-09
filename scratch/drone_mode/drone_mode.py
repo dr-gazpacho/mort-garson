@@ -2,12 +2,17 @@ from pythonosc import udp_client
 from enum import Enum
 import tkinter as tk
 from tkinter import ttk
+import argparse
 import math
 import time
 
 class DroneMode:
 
-    def __init__(self, start_gui=True):
+    def __init__(self, start_gui=True, print_read_values=False):
+        # Command line args
+        self.print_read_values=print_read_values
+        
+
         # Globals
         # https://learn.adafruit.com/adafruit-apds9960-breakout/circuitpython#color-reading-2980832
         self.APDS_COLOR_MIN = 0
@@ -184,10 +189,10 @@ class DroneMode:
             case 2:
                 return "blue"
             
-    def read_values(self, _=None, print_vals=False):
+    def read_values(self, _=None):
         """
         read all values and return a dictionary \n
-        set print_vals=True to print well-formatted information
+        use --prv when starting program to print well-formatted information
         """
 
         # I think one of the tkinter components has some implicit parameter,
@@ -212,7 +217,7 @@ class DroneMode:
 
         
         # print formatted vals when flag is set
-        if print_vals:
+        if self.print_read_values:
             print("\n" + "="*50)
             print("CURRENT DRONE MODE VALUES:")
             print("="*50)
@@ -261,7 +266,7 @@ class DroneMode:
         I think one of the tkinter components has some implicit parameter, \n
         which is why i need to do this defaulting _=None thing in the arguments
         """
-        current_state = self.read_values(print_vals=True)
+        current_state = self.read_values()
 
         osc_message = [
             "mode", current_state["mode"],
@@ -299,9 +304,13 @@ class DroneMode:
         # if self.mode == self.mode_enum.DRONE:
         #     self.client.send_message("/drone_mode", [red_value, blue_value, green_value, white_value, volume_value, is_checked, white_as_single_digit, greatest_color])
 
-def run_gui():
+def run_gui(args):
     """Function to run the GUI for normal operation"""
-    DroneMode()
+    DroneMode(print_read_values=args.prv)
 
 if __name__ == "__main__":
-    run_gui()
+    parser = argparse.ArgumentParser(description="GUI to interface with Supercollider")
+    parser.add_argument('--prv', action='store_true', help='Print all read values from inputs')
+    args = parser.parse_args()
+    
+    run_gui(args)
