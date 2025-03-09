@@ -296,6 +296,16 @@ class DroneMode:
         """
         current_state = self.read_values()
 
+        ################### TO DO ###################
+        # implement set theory methods to convert APDS inputs to something interesting
+        # send them to super collider - set theory relationships can/should determine something about the quality of the drone
+        # use flex sensor to affet drone:
+        # - pressure increases spread of notes - from "chord" to "individual tones on different schedules"
+        # - pressure mutes notes
+        # - pressure adds modulation
+        # how the fuck do i use proximity? maybe its a envelope filter + volume? the more you "press" the more you're pressing the sound back into the instrument
+        # this could be a technique for bit crushing - "press" the sound and release to get something new out
+
         osc_message = [
             "mode", current_state["mode"],
             "volume", current_state["volume"],
