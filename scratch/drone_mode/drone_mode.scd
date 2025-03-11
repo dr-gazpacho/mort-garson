@@ -12,12 +12,17 @@ OSCdef.freeAll;
 s.waitForBoot({
     s.plotTree;
     SynthDef(\fm, {
-        arg freq=500, mRatio=1, cRatio=1, index=1, amp=0.2;
-        var car, mod, env;
+        arg freq=500, mRatio=1, cRatio=1, index=1, tremeloFreq=0.1, tremeloPhase=0;
+        var car, mod, env, tremolo, withTremolo;
+		tremolo = (SinOsc.kr(freq: tremeloFreq, phase: tremeloPhase) * 0.5) + 0.5;
+		//multiplying by .5 reduces the amplitude to -.5 to .5
+		//adding .5 to make it oscillate from 0 to 1, off to on
+		//phase should take an argument in x*pi where pi shifts cycle by half, starting on quiet instead of loud
 		mod = SinOsc.ar((freq * mRatio).lag(2), mul:freq * mRatio);
-		car = SinOsc.ar((freq * cRatio).lag(2) + mod) * amp;
-        //direct out/reverb send
-        Out.ar(0, car);
+		car = SinOsc.ar((freq * cRatio).lag(2) + mod);
+		withTremolo = car * tremolo;
+
+        Out.ar(0, withTremolo);
     }).add;
 
 	OSCdef.new(\entry, {

@@ -29,6 +29,11 @@ class DroneMode:
         self.VOLUME_MIN = -40
         self.VOLUME_MAX = 6
 
+        # Other constants
+
+        self.TREMELO_MAX = 0.1
+        self.TREMELO_MIN = 0.001
+
         # OSC
         self.client = udp_client.SimpleUDPClient("127.0.0.1", 57120)
 
@@ -207,6 +212,17 @@ class DroneMode:
         
         """
         return int(apds_reading * 19 / self.APDS_COLOR_MAX) + 1
+    
+    def apds_light_to_tremolo(self, apds_reading):
+        """
+        Takes APDS reading as argument \n
+        Returns number between .001 (one on/off cycle per 16'40") and .1 (one on/off cycle per 10')
+        """
+        apds_input = max(0, min(65535, apds_reading))
+
+        ratio = apds_input / self.APDS_COLOR_MAX
+
+        return self.TREMELO_MIN + (ratio * (self.TREMELO_MAX - self.TREMELO_MIN))
 
     def name_greatest_color(self, index):
         match index:

@@ -41,6 +41,11 @@ def test_drone_mode():
     assert drone_mode.find_interval_class(2, 11) == 3, "Interval class 3 failed (11, 2)"
     assert drone_mode.find_interval_class(0, 7) == 5, "Interval class 5 failed (0, 7)"
 
+    # light to tremolo
+    assert drone_mode.apds_light_to_tremolo(0) == 0.001, "Floor tremolo test failed"
+    assert drone_mode.apds_light_to_tremolo(65535) == 0.1, "Ceiling tremolo test failed"
+    assert drone_mode.apds_light_to_tremolo(32767.5) == 0.0505, "Midpoint tremolo test failed"
+
 
 
     print("All tests passed!")
