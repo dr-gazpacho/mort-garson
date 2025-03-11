@@ -298,53 +298,34 @@ class DroneMode:
         # how the fuck do i use proximity? maybe its a envelope filter + volume? the more you 'press' the more you're pressing the sound back into the instrument
         # this could be a technique for bit crushing - 'press' the sound and release to get something new out
 
-        osc_message = [
-            'mode', current_state['mode'],
-            'volume', current_state['volume'],
-            'red', self.apds_light_to_midi(current_state.get('red')),
-            'red_pitch_class', self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get('red'))),
-            'green', self.apds_light_to_midi(current_state.get('green')),
-            'green_pitch_class', self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get('green'))),
-            'blue', self.apds_light_to_midi(current_state.get('blue')),
-            'blue_pitch_class', self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get('blue'))),
-            'white', self.apds_light_to_midi(current_state.get('white')),
-            'white_pitch_class', self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get('white'))),
-            'proximity', current_state.get('proximity'),
-            'flex_one', current_state.get('flex_one'),
-            'flex_two', current_state.get('flex_two'),
-            'flex_three', current_state.get('flex_three'),
-            'flex_four', current_state.get('flex_four')
-        ]
-
-        if self.print_osc:
-            print('&'*50)
-            for i in range(0, len(osc_message), 2):
-                print(f'Message: {osc_message[i]}')
-                print(f'Value: {osc_message[i + 1]}')
-                print('='*50)
-            print('+'*50)
-
         if current_state['mode'] == 1:
+            osc_message = [
+                'mode', current_state['mode'],
+                'volume', current_state['volume'],
+                'red', self.apds_light_to_midi(current_state.get('red')),
+                'red_pitch_class', self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get('red'))),
+                'green', self.apds_light_to_midi(current_state.get('green')),
+                'green_pitch_class', self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get('green'))),
+                'blue', self.apds_light_to_midi(current_state.get('blue')),
+                'blue_pitch_class', self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get('blue'))),
+                'white', self.apds_light_to_midi(current_state.get('white')),
+                'white_pitch_class', self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get('white'))),
+                'proximity', current_state.get('proximity'),
+                'flex_one', current_state.get('flex_one'),
+                'flex_two', current_state.get('flex_two'),
+                'flex_three', current_state.get('flex_three'),
+                'flex_four', current_state.get('flex_four')
+            ]
+
             self.client.send_message('/drone_mode', osc_message)
 
-        
-        # # some trivial computes before we send
-        # vals_as_list = [red_value, green_value, blue_value]
-
-        # index = 0
-        # current_max_value = vals_as_list[index]
-        # for i in range(1, len(vals_as_list)):
-        #     if vals_as_list[i] > current_max_value:
-        #         current_max_value = vals_as_list[i]
-        #         index = i
-
-        
-        # greatest_color = self.name_greatest_color(index)
-        # white_as_single_digit = math.floor(white_value / 10)
-
-        # # A strategy: if drone_mode is enabled, send messages to /drone_mode OSC listener e.g. if mode.x_mode -> /x_mode elif mode.y_mode -> /y_mode
-        # if self.mode == self.mode_enum.DRONE:
-        #     self.client.send_message('/drone_mode', [red_value, blue_value, green_value, white_value, volume_value, is_checked, white_as_single_digit, greatest_color])
+            if self.print_osc:
+                print('&'*50)
+                for i in range(0, len(osc_message), 2):
+                    print(f'Message: {osc_message[i]}')
+                    print(f'Value: {osc_message[i + 1]}')
+                    print('='*50)
+                print('+'*50)
 
 def run_gui(args):
     '''Function to run the GUI for normal operation'''
