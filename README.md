@@ -46,7 +46,9 @@ code/features into one entity without it getting too squirrley with global varia
   1. When you're done, run `^C + C` to quit (`control + C` on a Mac and probably linux, no fucking clue about windows...)
 1. If you HAVE run this before and installed your dependencies:
   1. Just run `source venv/bin/activate` - if you named your virtual environment something else that's stupid now you can't just copy paste my commands
-  1. Run the GUI with `python3 drone_mode.py`, enable print debugging with the `--prv` flag (print read values)
+  1. Run the GUI with `python3 drone_mode.py`, you can run with flags
+    1. `--prv`: Print Read values, print all values as they're read from the various hardware inputs
+    1. `--posc`: Print OSC, print the contents of the OSC message we're sending to super collider
   1. Run the sparce unit tests in the module with `python3 utils.text.py`
   1. Quit the GUI when you're done (`ctrl + c` in the terminal where you started the app)
 1. Open `drone_mode.py` in Supercollider, select all and run
