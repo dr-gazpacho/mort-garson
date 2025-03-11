@@ -8,9 +8,10 @@ import time
 
 class DroneMode:
 
-    def __init__(self, start_gui=True, print_read_values=False):
+    def __init__(self, start_gui=True, print_read_values=False, print_osc=False):
         # Command line args
         self.print_read_values=print_read_values
+        self.print_osc=print_osc
         
 
         # Globals
@@ -218,10 +219,7 @@ class DroneMode:
         Takes APDS reading as argument \n
         Returns number between .001 (one on/off cycle per 16'40") and .1 (one on/off cycle per 10')
         """
-        apds_input = max(0, min(65535, apds_reading))
-
-        ratio = apds_input / self.APDS_COLOR_MAX
-
+        ratio = apds_reading / self.APDS_COLOR_MAX
         return self.TREMELO_MIN + (ratio * (self.TREMELO_MAX - self.TREMELO_MIN))
 
     def name_greatest_color(self, index):
@@ -326,15 +324,27 @@ class DroneMode:
             "mode", current_state["mode"],
             "volume", current_state["volume"],
             "red", self.apds_light_to_midi(current_state.get("apds").get("red")),
+            "red_pitch_class", self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get("apds").get("red"))),
             "green", self.apds_light_to_midi(current_state.get("apds").get("green")),
+            "green_pitch_class", self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get("apds").get("green"))),
             "blue", self.apds_light_to_midi(current_state.get("apds").get("blue")),
-            "white", current_state.get("apds").get("white"),
+            "blue_pitch_class", self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get("apds").get("blue"))),
+            "white", self.apds_light_to_midi(current_state.get("apds").get("white")),
+            "white_pitch_class", self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get("apds").get("white"))),
             "proximity", current_state.get("apds").get("proximity"),
             "flex_one", current_state.get("flex").get("flex_one"),
             "flex_two", current_state.get("flex").get("flex_two"),
             "flex_three", current_state.get("flex").get("flex_three"),
             "flex_four", current_state.get("flex").get("flex_four")
         ]
+
+        if self.print_osc:
+            print("&"*50)
+            for i in range(0, len(osc_message), 2):
+                print(f"Message: {osc_message[i]}")
+                print(f"Value: {osc_message[i + 1]}")
+                print("="*50)
+            print("+"*50)
 
         if current_state["mode"] == 1:
             self.client.send_message("/drone_mode", osc_message)
@@ -360,11 +370,12 @@ class DroneMode:
 
 def run_gui(args):
     """Function to run the GUI for normal operation"""
-    DroneMode(print_read_values=args.prv)
+    DroneMode(print_read_values=args.prv, print_osc=args.posc)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="GUI to interface with Supercollider")
     parser.add_argument('--prv', action='store_true', help='Print all read values from inputs')
+    parser.add_argument('--posc', action='store_true', help='Print OSC message sent to Super Collider')
     args = parser.parse_args()
     
     run_gui(args)
