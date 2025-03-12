@@ -221,6 +221,15 @@ class DroneMode:
         '''
         ratio = apds_reading / self.APDS_COLOR_MAX
         return self.TREMELO_MIN + (ratio * (self.TREMELO_MAX - self.TREMELO_MIN))
+    
+    def apds_light_to_radians(self, apds_reading):
+        '''
+        Takes APDS reading as argument \n
+        Returns number between 0 and 2π \n
+        Used to manipulate phase of sine wave
+        '''
+        ratio = apds_reading / self.APDS_COLOR_MAX
+        return ratio * 2 * math.pi
 
     def name_greatest_color(self, index):
         match index:
@@ -304,10 +313,13 @@ class DroneMode:
                 'volume', current_state['volume'],
                 'red', self.apds_light_to_midi(current_state.get('red')),
                 'red_pitch_class', self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get('red'))),
+                'red_phase_offset', self.apds_light_to_radians(current_state.get('red')),
                 'green', self.apds_light_to_midi(current_state.get('green')),
                 'green_pitch_class', self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get('green'))),
+                'green_phase_offset', self.apds_light_to_radians(current_state.get('green')),
                 'blue', self.apds_light_to_midi(current_state.get('blue')),
                 'blue_pitch_class', self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get('blue'))),
+                'blue_phase_offset', self.apds_light_to_radians(current_state.get('blue')),
                 'white', self.apds_light_to_midi(current_state.get('white')),
                 'white_pitch_class', self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get('white'))),
                 'proximity', current_state.get('proximity'),

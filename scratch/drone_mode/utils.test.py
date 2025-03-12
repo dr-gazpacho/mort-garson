@@ -1,4 +1,5 @@
 from drone_mode import DroneMode
+import math
 
 def test_drone_mode():
     drone_mode = DroneMode(start_gui=False)
@@ -45,6 +46,11 @@ def test_drone_mode():
     assert drone_mode.apds_light_to_tremolo(0) == 0.001, "Floor tremolo test failed"
     assert drone_mode.apds_light_to_tremolo(65535) == 0.1, "Ceiling tremolo test failed"
     assert drone_mode.apds_light_to_tremolo(32767.5) == 0.0505, "Midpoint tremolo test failed"
+
+    # light to radians
+    assert drone_mode.apds_light_to_radians(0) == 0, "Radians floor test failed"
+    assert drone_mode.apds_light_to_radians(65535) == 2 * math.pi, "Radians ceiling test failed"
+    assert drone_mode.apds_light_to_radians(32767.5) == math.pi, "Midpoint test failed"
 
 
 

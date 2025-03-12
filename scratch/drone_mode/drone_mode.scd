@@ -42,15 +42,15 @@ s.waitForBoot({
 
 			currentEnvironment.put(
 				\red_fm,
-				Synth(\fm, [\freq, params[\red].midicps])
-			);
-			currentEnvironment.put(
-				\blue_fm,
-				Synth(\fm, [\freq, params[\blue].midicps])
+				Synth(\fm, [\freq, params[\red].midicps, \tremeloPhase, params[\red_phase_offset]])
 			);
 			currentEnvironment.put(
 				\green_fm,
-				Synth(\fm, [\freq, params[\green].midicps])
+				Synth(\fm, [\freq, params[\green].midicps, \tremeloPhase, params[\green_phase_offset]])
+			);
+			currentEnvironment.put(
+				\blue_fm,
+				Synth(\fm, [\freq, params[\blue].midicps, \tremeloPhase, params[\blue_phase_offset]])
 			);
 
 		};
@@ -70,9 +70,9 @@ s.waitForBoot({
 				~v.volume = params[\volume];
 			};
 
-			~red_fm.set(\freq, params[\red].midicps);
-			~green_fm.set(\freq, params[\green].midicps);
-			~blue_fm.set(\freq, params[\blue].midicps);
+			~red_fm.set(\freq, params[\red].midicps, \tremeloPhase, params[\red_phase_offset]);
+			~green_fm.set(\freq, params[\green].midicps, \tremeloPhase, params[\green_phase_offset]);
+			~blue_fm.set(\freq, params[\blue].midicps, \tremeloPhase, params[\blue_phase_offset]);
 
 			/*
 			postln(greatest_color.class);
