@@ -308,17 +308,21 @@ class DroneMode:
         # this could be a technique for bit crushing - 'press' the sound and release to get something new out
 
         if current_state['mode'] == 1:
+            # all strings can be referenced in supercollider e.g. the value for mode can be referenced as \mode in SC
             osc_message = [
                 'mode', current_state['mode'],
                 'volume', current_state['volume'],
                 'red', self.apds_light_to_midi(current_state.get('red')),
                 'red_pitch_class', self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get('red'))),
+                'red_tremolo_frequency', self.apds_light_to_tremolo(current_state.get('red')),
                 'red_phase_offset', self.apds_light_to_radians(current_state.get('red')),
                 'green', self.apds_light_to_midi(current_state.get('green')),
                 'green_pitch_class', self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get('green'))),
+                'green_tremolo_frequency', self.apds_light_to_tremolo(current_state.get('green')),
                 'green_phase_offset', self.apds_light_to_radians(current_state.get('green')),
                 'blue', self.apds_light_to_midi(current_state.get('blue')),
                 'blue_pitch_class', self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get('blue'))),
+                'blue_tremolo_frequency', self.apds_light_to_tremolo(current_state.get('blue')),
                 'blue_phase_offset', self.apds_light_to_radians(current_state.get('blue')),
                 'white', self.apds_light_to_midi(current_state.get('white')),
                 'white_pitch_class', self.midi_to_pitch_class(self.apds_light_to_midi(current_state.get('white'))),

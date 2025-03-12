@@ -22,7 +22,7 @@ s.waitForBoot({
 		car = SinOsc.ar((freq * cRatio).lag(2) + mod);
 		withTremolo = car * tremolo;
 
-        Out.ar(0, withTremolo);
+        Out.ar(0, withTremolo ! 2);
     }).add;
 
 	OSCdef.new(\entry, {
@@ -30,6 +30,8 @@ s.waitForBoot({
 		var params = Dictionary.new, i;
 
 		// Skip first element (OSC address)
+		// all values in the osc_message in the python app are getting chucked into this dictionary "params"
+		// you can reference things using the property name as a symbol
 		i = 1;
 		while({i < msg.size}, {
 			params.put(msg[i].asSymbol, msg[i+1]);
@@ -42,15 +44,27 @@ s.waitForBoot({
 
 			currentEnvironment.put(
 				\red_fm,
-				Synth(\fm, [\freq, params[\red].midicps, \tremeloPhase, params[\red_phase_offset]])
+				Synth(\fm, [
+					\freq, params[\red].midicps,
+					\tremeloFreq, params[\red_tremolo_frequency],
+					\tremeloPhase, params[\red_phase_offset]
+				])
 			);
 			currentEnvironment.put(
 				\green_fm,
-				Synth(\fm, [\freq, params[\green].midicps, \tremeloPhase, params[\green_phase_offset]])
+				Synth(\fm, [
+					\freq, params[\green].midicps,
+					\tremeloFreq, params[\green_tremolo_frequency],
+					\tremeloPhase, params[\green_phase_offset]
+				])
 			);
 			currentEnvironment.put(
 				\blue_fm,
-				Synth(\fm, [\freq, params[\blue].midicps, \tremeloPhase, params[\blue_phase_offset]])
+				Synth(\fm, [
+					\freq, params[\blue].midicps,
+					\tremeloFreq, params[\blue_tremolo_frequency],
+					\tremeloPhase, params[\blue_phase_offset]
+				])
 			);
 
 		};
@@ -70,9 +84,21 @@ s.waitForBoot({
 				~v.volume = params[\volume];
 			};
 
-			~red_fm.set(\freq, params[\red].midicps, \tremeloPhase, params[\red_phase_offset]);
-			~green_fm.set(\freq, params[\green].midicps, \tremeloPhase, params[\green_phase_offset]);
-			~blue_fm.set(\freq, params[\blue].midicps, \tremeloPhase, params[\blue_phase_offset]);
+			~red_fm.set(
+				\freq, params[\red].midicps,
+				\tremeloFreq, params[\red_tremolo_frequency],
+				\tremeloPhase, params[\red_phase_offset]
+			);
+			~green_fm.set(
+				\freq, params[\green].midicps,
+				\tremeloFreq, params[\green_tremolo_frequency],
+				\tremeloPhase, params[\green_phase_offset]
+			);
+			~blue_fm.set(
+				\freq, params[\blue].midicps,
+				\tremeloFreq, params[\blue_tremolo_frequency],
+				\tremeloPhase, params[\blue_phase_offset]
+			);
 
 			/*
 			postln(greatest_color.class);
