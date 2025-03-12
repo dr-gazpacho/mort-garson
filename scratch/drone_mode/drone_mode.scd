@@ -39,7 +39,7 @@ s.waitForBoot({
 		});
 
 
-		if(params[\proximity] > 0 && ~started.not) {
+		if(params[\white] > 20 && ~started.not) {
 			~started = true;
 
 			currentEnvironment.put(
@@ -69,7 +69,7 @@ s.waitForBoot({
 
 		};
 
-		if(params[\proximity] == 0 && ~started) {
+		if(params[\white] == 20 && ~started) {
 			~started = false;
 			s.freeAll;
 			//~red_fm.free;
