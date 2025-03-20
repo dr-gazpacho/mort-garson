@@ -1,5 +1,4 @@
 from pythonosc import udp_client
-from enum import Enum
 import tkinter as tk
 from tkinter import ttk
 import argparse
