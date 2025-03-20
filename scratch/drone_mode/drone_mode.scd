@@ -12,48 +12,64 @@ OSCdef.freeAll;
 s.waitForBoot({
     s.plotTree;
     SynthDef(\fm, {
-        arg freq=500, mRatio=1, cRatio=1, index=1, amp=0.2;
-        var car, mod, env;
+        arg freq=500, mRatio=1, cRatio=1, index=1, tremeloFreq=0.1, tremeloPhase=0;
+        var car, mod, env, tremolo, withTremolo;
+		tremolo = (SinOsc.kr(freq: tremeloFreq, phase: tremeloPhase) * 0.5) + 0.5;
+		//multiplying by .5 reduces the amplitude to -.5 to .5
+		//adding .5 to make it oscillate from 0 to 1, off to on
+		//phase should take an argument in x*pi where pi shifts cycle by half, starting on quiet instead of loud
 		mod = SinOsc.ar((freq * mRatio).lag(2), mul:freq * mRatio);
-		car = SinOsc.ar((freq * cRatio).lag(2) + mod) * amp;
-        //direct out/reverb send
-        Out.ar(0, car);
+		car = SinOsc.ar((freq * cRatio).lag(2) + mod);
+		withTremolo = car * tremolo;
+
+        Out.ar(0, withTremolo ! 2);
     }).add;
 
 	OSCdef.new(\entry, {
 		|msg, time, addr, recvPort|
-		var red, blue, green, clear, volume, is_checked, clear_single, greatest_color;
-		//these are the raw values
-		red = msg[1];
-		blue = msg[2];
-		green = msg[3];
-		clear = msg[4];
-		volume = msg[5];
-		is_checked = msg[6];
-		//and the computed values
-		clear_single = msg[7];
-		greatest_color = msg[8];
+		var params = Dictionary.new, i;
+
+		// Skip first element (OSC address)
+		// all values in the osc_message in the python app are getting chucked into this dictionary "params"
+		// you can reference things using the property name as a symbol
+		i = 1;
+		while({i < msg.size}, {
+			params.put(msg[i].asSymbol, msg[i+1]);
+			i = i + 2;
+		});
 
 
-		if(is_checked && ~started.not) {
+		if(params[\white] > 20 && ~started.not) {
 			~started = true;
 
 			currentEnvironment.put(
 				\red_fm,
-				Synth(\fm, [\freq, red.midicps])
-			);
-			currentEnvironment.put(
-				\blue_fm,
-				Synth(\fm, [\freq, blue.midicps])
+				Synth(\fm, [
+					\freq, params[\red].midicps,
+					\tremeloFreq, params[\red_tremolo_frequency],
+					\tremeloPhase, params[\red_phase_offset]
+				])
 			);
 			currentEnvironment.put(
 				\green_fm,
-				Synth(\fm, [\freq, green.midicps])
+				Synth(\fm, [
+					\freq, params[\green].midicps,
+					\tremeloFreq, params[\green_tremolo_frequency],
+					\tremeloPhase, params[\green_phase_offset]
+				])
+			);
+			currentEnvironment.put(
+				\blue_fm,
+				Synth(\fm, [
+					\freq, params[\blue].midicps,
+					\tremeloFreq, params[\blue_tremolo_frequency],
+					\tremeloPhase, params[\blue_phase_offset]
+				])
 			);
 
 		};
 
-		if(is_checked.not && ~started) {
+		if(params[\white] == 20 && ~started) {
 			~started = false;
 			s.freeAll;
 			//~red_fm.free;
@@ -64,26 +80,40 @@ s.waitForBoot({
 
 		if(~started) {
 		// NOW this is where we start the mess
-			if(~v.volume != volume) {
-				~v.volume = volume;
+			if(~v.volume != params[\volume]) {
+				~v.volume = params[\volume];
 			};
 
-			~red_fm.set(\freq, red.midicps, \mRatio, clear_single);
-			~green_fm.set(\freq, green.midicps, \mRatio, clear_single);
-			~blue_fm.set(\freq, blue.midicps, \mRatio, clear_single);
+			~red_fm.set(
+				\freq, params[\red].midicps,
+				\tremeloFreq, params[\red_tremolo_frequency],
+				\tremeloPhase, params[\red_phase_offset]
+			);
+			~green_fm.set(
+				\freq, params[\green].midicps,
+				\tremeloFreq, params[\green_tremolo_frequency],
+				\tremeloPhase, params[\green_phase_offset]
+			);
+			~blue_fm.set(
+				\freq, params[\blue].midicps,
+				\tremeloFreq, params[\blue_tremolo_frequency],
+				\tremeloPhase, params[\blue_phase_offset]
+			);
 
+			/*
 			postln(greatest_color.class);
 			switch(greatest_color,
 				\red, {
-					~red_fm.set(\cRatio, clear_single);
+					~red_fm.set(\cRatio, white_single);
 				},
 				\green, {
-					~green_fm.set(\cRatio, clear_single);
+					~green_fm.set(\cRatio, white_single);
 				},
 				\blue, {
-					~blue_fm.set(\cRatio, clear_single);
+					~blue_fm.set(\cRatio, white_single);
 				}
-		);
+			);
+			*/
 
 
 		};
